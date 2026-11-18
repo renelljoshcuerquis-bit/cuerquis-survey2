@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Survey Register</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+
+	<body>
+		Username
+		<input id='username' type='text'>
+		Password
+		<input id='password' type='password'>
+		Confirm Password
+		<input id='confirmed_password' type='password'>
+
+		<div id='message' class='message'></div>
+
+		<button type="button" onclick="register()">Sign up</button>
+		<a href="login.html">Back to login</a>
+
+		<script>
+			const message = document.getElementById('message');
+
+			async function register() {
+				const postData = {
+					username: document.getElementById('username').value,
+					password: document.getElementById('password').value,
+					confirmed_password: document.getElementById('confirmed_password').value
+				};
+
+				if (postData.password !== postData.confirmed_password) {
+					message.className = 'message';
+					message.textContent = 'Passwords do not match';
+					return;
+				}
+
+				try {
+					const response = await fetch('http://127.0.0.1:8000/register', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(postData)
+					});
+					const result = await response.json();
+
+					if (response.ok && result.status === 'success') {
+						message.className = 'message ok';
+						message.textContent = 'Account created! Redirecting to login...';
+						setTimeout(() => { document.location.href = 'login.html'; }, 1200);
+					} else {
+						message.className = 'message';
+						message.textContent = result.detail || 'Registration failed';
+					}
+				} catch (error) {
+					console.error('Error:', error);
+					message.className = 'message';
+					message.textContent = 'Cannot reach the server. Is it running?';
+				}
+			}
+		</script>
+	</body>
+</html>

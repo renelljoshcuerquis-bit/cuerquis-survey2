@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Favorites Survey</title>
+		<link rel="stylesheet" href="styles.css">
+		<script>
+			// must be logged in to see this page
+			if (!localStorage.getItem('username')) {
+				document.location.href = 'login.html';
+			}
+		</script>
+	</head>
+
+	<body>
+		name
+		<input id='name' type='text'>
+		food
+		<input id='food' type='text'>
+		sports
+		<input id='sports' type='text'>
+		animals
+		<input id='animals' type='text'>
+		country
+		<input id='country' type='text'>
+		car
+		<input id='car' type='text'>
+		brand
+		<input id='brand' type='text'>
+		games
+		<input id='games' type='text'>
+		phone
+		<input id='phone' type='text'>
+		bike
+		<input id='bike' type='text'>
+
+		<div id='message' class='message'></div>
+
+		<button type="button" onclick="submitSurvey()">Click Me!</button>
+		<button type="button" onclick="logout()">Log out</button>
+
+		<script>
+			const fields = ['name', 'food', 'sports', 'animals', 'country',
+				'car', 'brand', 'games', 'phone', 'bike'];
+
+			async function submitSurvey() {
+				const postData = {};
+				fields.forEach(id => { postData[id] = document.getElementById(id).value; });
+
+				const message = document.getElementById('message');
+
+				try {
+					const response = await fetch('http://127.0.0.1:8000/Survey', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(postData)
+					});
+					const result = await response.json();
+
+					if (response.ok && result.status === 'success') {
+						document.location.href = 'profile.html.html';
+					} else {
+						message.textContent = 'Please fill in every field.';
+					}
+				} catch (error) {
+					console.error('Error:', error);
+					message.textContent = 'Cannot reach the server. Is it running?';
+				}
+			}
+
+			function logout() {
+				localStorage.removeItem('username');
+				document.location.href = 'login.html';
+			}
+		</script>
+	</body>
+</html>
