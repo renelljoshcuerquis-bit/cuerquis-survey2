@@ -22,13 +22,13 @@ app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=False,  # must be False when allow_origins is "*"
+    allow_credentials=False,  
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-# ---------- password helpers ----------
+
 def hash_password(password: str, salt: str | None = None) -> str:
     salt = salt or secrets.token_hex(16)
     digest = hashlib.pbkdf2_hmac(
@@ -43,10 +43,6 @@ def verify_password(password: str, stored: str) -> bool:
     return hmac.compare_digest(new_digest, digest)
 
 
-# ---------- routes ----------
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
 
 
 @app.post("/register")
